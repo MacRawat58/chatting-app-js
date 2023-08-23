@@ -45,11 +45,31 @@ app.post("/login", (req, res) => {
   );
 
   if (user) {
+    fetchMessages();
     res.json({ success: true });
   } else {
     res.json({ success: false });
   }
 });
+
+// app.post("/login", async (req, res) => {
+//   const { username, password } = req.body;
+//   const user = users.find(
+//     (u) => u.username === username && u.password === password
+//   );
+
+//   if (user) {
+//     try {
+//       const messages = await fetchMessagesForUser(user); // Fetch messages
+//       res.json({ success: true, messages }); // Send messages along with success response
+//     } catch (error) {
+//       console.log("Error fetching messages:", error);
+//       res.json({ success: false });
+//     }
+//   } else {
+//     res.json({ success: false });
+//   }
+// });
 
 // Serve static files from the 'public' folder
 app.use(express.static("public"));
@@ -106,3 +126,42 @@ const port = process.env.PORT || 3000;
 http.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+// Function to fetch messages using Axios
+async function fetchMessages() {
+  try {
+    const response = await axios(config);
+    const messages = response.data; // Extract messages from the response
+    console.log("Fetched messages:", messages);
+    // Further processing or display logic for messages can be added here
+  } catch (error) {
+    console.log("Error fetching messages:", error);
+  }
+}
+
+// async function fetchMessagesForUser(user) {
+//   const data = JSON.stringify({
+//     collection: "messages",
+//     database: "MacDb",
+//     dataSource: "bel-chat",
+//     filter: {
+//       sender: user.username, // Filter messages by sender's username
+//     },
+//   });
+
+//   const config = {
+//     method: "post",
+//     url: "https://ap-south-1.aws.data.mongodb-api.com/app/data-tfaat/endpoint/data/v1/action/find",
+//     headers: {
+//       "Content-Type": "application/json",
+//       "Access-Control-Request-Headers": "*",
+//       "api-key":
+//         "f0LNAMtvH5T4f8QzllIWroB2r9J2Ekv7LPk1jM4WjjZdwOSqT44A1M0hIJfJMQPT",
+//       Accept: "application/ejson",
+//     },
+//     data: data,
+//   };
+
+//   const response = await axios(config);
+//   return response.data;
+// }
